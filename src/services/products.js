@@ -1,7 +1,22 @@
-import { ProductModel } from '../db/models/product.js';
+import { ProductModel } from '../models/productModel.js';
 
-export const getAllProductsService = () => {
-  return ProductModel.find();
+export const getAllProductsService = ({ filter, userId }) => {
+  console.log(filter);
+  const productQuery = ProductModel.find({ userId });
+
+  if (filter.category) {
+    productQuery.where('category').equals(filter.category);
+  }
+
+  if (filter.maxPrice) {
+    productQuery.where('price').lte(filter.maxPrice);
+  }
+
+  if (filter.minPrice) {
+    productQuery.where('price').gte(filter.minPrice);
+  }
+
+  return productQuery;
 };
 
 export const getProductByIdService = (productId) => {

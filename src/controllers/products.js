@@ -6,9 +6,15 @@ import {
   getProductByIdService,
   updateProductService,
 } from '../services/products.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export const getAllProductsController = async (req, res) => {
-  const products = await getAllProductsService();
+  const filter = parseFilterParams(req.query);
+  console.log(filter);
+  const products = await getAllProductsService({
+    filter,
+    userId: req.user,
+  });
   res.json({
     status: 200,
     message: 'Successfully found products!',
@@ -31,7 +37,10 @@ export const getProductByIdController = async (req, res) => {
 };
 
 export const createProductController = async (req, res) => {
-  const product = await createProductService(req.body);
+  const product = await createProductService({
+    ...req.body,
+    userId: req.user._id,
+  });
 
   res.status(201).json({
     status: 201,
